@@ -41,9 +41,9 @@ sessionInfo()
 ## Importar
 
 ```{r}
-plot01 <- readPNG("fig1.png") %>% grid::rasterGrob()
-plot02 <- readPNG("fig2.png") %>% grid::rasterGrob()
-plot03 <- readPNG("fig3.png") %>% grid::rasterGrob()
+plot01 <- readJPEG("cacTus.jpg") %>% grid::rasterGrob()
+plot02 <- readJPEG("hojas.jpg") %>% grid::rasterGrob()
+plot03 <- readJPEG("planta.jpg") %>% grid::rasterGrob()
 ```
 
 ## Grid plots
@@ -86,3 +86,64 @@ imgs <- 1:length(pdf2tiff) %>% map(\(x) {
   
 })
 ```
+
+
+# cowplot R
+
+```{r}
+library(ggplot2)
+library(cowplot)
+
+# define a function that emits the desired plot
+p1 <- function() {
+  par(
+    mar = c(3, 3, 1, 1),
+    mgp = c(2, 1, 0)
+  )
+  boxplot(mpg ~ cyl, xlab = "cyl", ylab = "mpg", data = mtcars)
+}
+
+ggdraw(p1) +
+  theme(plot.background = element_rect(fill = "cornsilk"))
+```
+
+
+# Grid
+
+```{r}
+# base R
+p1 <- ~{
+  par(
+    mar = c(3, 3, 1, 1), 
+    mgp = c(2, 1, 0)
+  )
+  boxplot(mpg ~ cyl, xlab = "cyl", ylab = "mpg", data = mtcars)
+}
+
+# ggplot2
+p2 <- ggplot(data = mtcars, aes(factor(cyl), mpg)) + geom_boxplot()
+
+# lattice
+library(lattice)
+p3 <- bwplot(~mpg | cyl, data = mtcars)
+
+# elementary grid graphics objects
+library(grid)
+p4 <- circleGrob(r = 0.3, gp = gpar(fill = "skyblue"))
+
+# combine all into one plot
+plot <- list(p1, p2, p3, p4) %>% 
+  plot_grid(plotlist= .
+          , rel_heights = c(.6, 1)
+          , labels = "AUTO"
+          , nrow = 2)
+
+plot %>% ggsave2(plot = .,
+  filename = "Figure-01.jpg",
+  units = "cm",
+  width = 20,
+  height = 20
+)
+
+```
+
